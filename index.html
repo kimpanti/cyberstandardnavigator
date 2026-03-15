@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Navigator | Final Authority v8.5</title>
+    <title>Cyber Navigator | Resource Estimator v12.0</title>
     <style>
         :root {
             --primary: #007AFF;
@@ -23,118 +23,198 @@
             padding: 15px; border-radius: 10px; margin-bottom: 25px; font-size: 0.85rem; color: #fbbf24;
         }
 
-        .stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 25px; }
-        .stat-card { background: #1e293b; border: 1px solid var(--border); padding: 15px; border-radius: 12px; text-align: center; }
-        .stat-num { display: block; font-size: 1.8rem; font-weight: 800; color: var(--primary); }
-        .stat-label { font-size: 0.7rem; text-transform: uppercase; color: #94a3b8; }
+        /* Inventory Counter Styling */
+        .inventory-hero {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid var(--primary);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .inv-box { text-align: center; border-right: 1px solid var(--border); }
+        .inv-box:last-child { border-right: none; }
+        .inv-val { font-size: 2.5rem; font-weight: 900; color: var(--accent); display: block; }
+        .inv-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; }
+        .overlap-bonus { color: #10b981; font-weight: bold; font-size: 0.9rem; }
 
         .search-area { background: var(--glass); border: 1px solid var(--border); padding: 25px; border-radius: 20px; margin-bottom: 30px; }
         
         .mapping-card { background: var(--glass); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 25px; overflow: hidden; }
         .family-box { background: rgba(56, 189, 248, 0.1); padding: 15px 25px; border-bottom: 1px solid var(--border); }
-        .family-title { font-weight: 800; color: var(--accent); text-transform: uppercase; font-size: 0.85rem; margin-bottom: 5px; }
-        .family-desc { font-size: 0.9rem; color: #cbd5e1; font-style: italic; opacity: 0.8; }
+        .family-title { font-weight: 800; color: var(--accent); text-transform: uppercase; font-size: 0.85rem; }
         
         .mapping-content { display: grid; grid-template-columns: 1fr 60px 1fr; padding: 25px; gap: 25px; }
         .side { display: flex; flex-direction: column; gap: 12px; }
         .code-tag { display: inline-block; background: var(--primary); color: white; padding: 3px 10px; border-radius: 5px; font-weight: 800; font-size: 0.9rem; width: fit-content; }
-        .sub-detail { font-size: 0.8rem; color: #94a3b8; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; }
+        .control-spec { font-size: 0.8rem; color: #94a3b8; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; border-left: 3px solid var(--primary); }
 
-        .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-top: 30px; }
-        .res-link { background: #1e293b; padding: 15px; border-radius: 10px; border: 1px solid var(--border); font-size: 0.85rem; }
-        .res-link a { color: var(--primary); text-decoration: none; font-weight: bold; }
+        .btn-download {
+            background: var(--primary); color: white; border: none; padding: 12px 24px; 
+            border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%;
+        }
 
-        select, input { background: #1e293b; color: white; padding: 12px; border-radius: 8px; border: 1px solid var(--border); width: 100%; }
+        select, input { background: #1e293b; color: white; padding: 12px; border-radius: 8px; border: 1px solid var(--border); width: 100%; font-size: 1rem; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="disclaimer">
-        <strong>⚠️ EDUCATIONAL USE ONLY:</strong> This tool is a reference guide for mapping intent. Consult with a qualified auditor or legal counsel before finalizing your organization's internal control framework or compliance filings.
+        <strong>⚠️ EDUCATIONAL USE ONLY:</strong> Total counts are estimates based on standard framework mappings (NIST Rev 5, ISO 2022, ISM 2026). Overlap calculations assume a "Master Control" approach where one implementation satisfies multiple compliance goals.
     </div>
 
-    <div class="stats-bar">
-        <div class="stat-card"><span class="stat-num" id="stat-fam">0</span><span class="stat-label">Families Active</span></div>
-        <div class="stat-card"><span class="stat-num" id="stat-ctrl">0</span><span class="stat-label">Harmonized Controls</span></div>
-        <div class="stat-card"><span class="stat-num" id="stat-sub">0</span><span class="stat-label">Implementation Actions</span></div>
+    <div class="inventory-hero">
+        <div class="inv-box">
+            <span class="inv-val" id="total-req">0</span>
+            <span class="inv-label">Gross Req. Controls</span>
+        </div>
+        <div class="inv-box">
+            <span class="inv-val" id="total-overlap" style="color:#10b981;">0</span>
+            <span class="inv-label">Harmonized Overlaps</span>
+        </div>
+        <div class="inv-box">
+            <span class="inv-val" id="total-net" style="color:#f59e0b;">0</span>
+            <span class="inv-label">Net Net Implementation</span>
+        </div>
     </div>
 
     <div class="search-area">
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px;">
-            <select id="f1" onchange="updateUI()">
-                <option value="nist800">NIST 800-53 Rev. 5</option>
-                <option value="nistcsf">NIST CSF 2.0</option>
-                <option value="itil">ITIL 4 Practices</option>
-                <option value="iso">ISO 27001:2022</option>
-            </select>
-            <select id="f2" onchange="updateUI()">
-                <option value="e8">Essential 8 (AU)</option>
-                <option value="cis">CIS Controls v8</option>
-                <option value="nist800">NIST 800-53 Rev. 5</option>
-            </select>
+            <div>
+                <label class="inv-label">Primary Compliance Framework</label>
+                <select id="f1" onchange="updateUI()"></select>
+            </div>
+            <div>
+                <label class="inv-label">Secondary Hardening Framework</label>
+                <select id="f2" onchange="updateUI()"></select>
+            </div>
         </div>
-        <input type="text" id="keywordSearch" placeholder="Search by Mission (e.g., MFA, Recovery, Inventory)..." onkeyup="updateUI()">
+        <input type="text" id="keywordSearch" placeholder="Filter by domain or Control ID..." onkeyup="updateUI()">
+        <button class="btn-download" onclick="downloadChecklist()">Download Implementation Checklist (.txt)</button>
     </div>
 
     <div id="mappingResult"></div>
-
-    <h2 style="margin-top:50px;">Official Authority Resources</h2>
-    <div class="resource-grid">
-        <div class="res-link"><strong>NIST CSF 2.0:</strong><br><a href="https://www.nist.gov/cyberframework" target="_blank">Strategy & Tiers →</a></div>
-        <div class="res-link"><strong>NIST 800-53:</strong><br><a href="https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final" target="_blank">Control Catalog →</a></div>
-        <div class="res-link"><strong>Essential 8 (ACSC):</strong><br><a href="https://www.cyber.gov.au/resources-business-and-government/essential-cyber-security/essential-eight" target="_blank">Australian Mitigation Baseline →</a></div>
-        <div class="res-link"><strong>CIS Controls:</strong><br><a href="https://www.cisecurity.org/controls/v8" target="_blank">Technical Hardening →</a></div>
-        <div class="res-link"><strong>ITIL 4:</strong><br><a href="https://www.axelos.com/certifications/itil-service-management" target="_blank">Practice Guidance →</a></div>
-    </div>
 </div>
 
 <script>
+    const frameworks = [
+        { id: "nist800", name: "NIST 800-53 Rev. 5", count: 1007 },
+        { id: "ism", name: "ASD ISM (Australia)", count: 800 },
+        { id: "nistcsf", name: "NIST CSF 2.0", count: 106 },
+        { id: "iso", name: "ISO 27001:2022", count: 93 },
+        { id: "e8", name: "Essential 8 (AU)", count: 8 },
+        { id: "cis", name: "CIS Controls v8", count: 153 },
+        { id: "itil", name: "ITIL 4 Practices", count: 34 }
+    ];
+
     const frameworkData = [
         {
-            family: "Access Control & Identity",
-            familyDesc: "Managing identities and credentials to ensure authorized access to assets.",
-            nist800: { id: "AC-2", title: "Account Management", sub: "Automate account lifecycle management and review user permissions regularly." },
-            nistcsf: { id: "PR.AA", title: "Authentication", sub: "Users and systems are authenticated for access to assets." },
-            itil: { id: "Identity Mgmt", title: "Role-Based Access", sub: "Define service roles and access permissions within the service lifecycle." },
-            e8: { id: "Restrict Admin", title: "Privileged Access", sub: "Limit administrative privileges to only what is required for the role." },
-            cis: { id: "CIS 06", title: "Access Control", sub: "Enforce MFA for all remote and administrative access." }
+            family: "Identity & Access Control",
+            familyDesc: "Managing identity lifecycle and authentication to prevent unauthorized access.",
+            nist800: { id: "AC-2", title: "Account Management", spec: "Manage accounts including creation, modification, and removal based on least privilege." },
+            ism: { id: "ISM-1504", title: "MFA for Services", spec: "Multi-factor authentication is used for all online services communicating sensitive data." },
+            nistcsf: { id: "PR.AA-01", title: "Identity Mgmt", spec: "Access is limited to authorized users, processes, and devices." },
+            iso: { id: "A.5.15", title: "Access Rights", spec: "Provision and review access rights based on business requirements." },
+            e8: { id: "MFA", title: "MFA Enforcement", spec: "MFA for remote, administrative, and third-party access." },
+            cis: { id: "CIS 06", title: "Access Mgmt", spec: "Centralize access control; enforce MFA for all administrative credentials." },
+            itil: { id: "Identity", title: "Identity Practice", spec: "Manage identity lifecycle to maintain service security." }
         },
         {
-            family: "Recovery & Backups",
-            familyDesc: "Ensuring data can be restored and systems recovered following a disruptive event.",
-            nist800: { id: "CP-9", title: "Information System Backup", sub: "Conduct incremental and full backups with offsite storage and testing." },
-            nistcsf: { id: "RC.RP", title: "Recovery Planning", sub: "Recovery processes are executed to ensure timely restoration of systems." },
-            itil: { id: "Service Continuity", title: "Continuity Mgmt", sub: "Maintain service levels during a disaster via proactive risk planning." },
-            e8: { id: "Daily Backups", title: "Data Recovery", sub: "Back up important data daily and store it offline or in an immutable location." },
-            cis: { id: "CIS 11", title: "Data Recovery", sub: "Automate backups and perform restoration tests at least quarterly." }
+            family: "Vulnerability & Patching",
+            familyDesc: "Mitigating technical weaknesses via software updates.",
+            nist800: { id: "RA-5", title: "Vuln Monitoring", spec: "Scan for and remediate vulnerabilities based on risk assessments." },
+            ism: { id: "ISM-1698", title: "Vuln Scanning", spec: "Use a scanner daily to identify missing patches for online services." },
+            nistcsf: { id: "PR.PS-02", title: "Patching", spec: "Software is managed and patched to reduce the attack surface." },
+            iso: { id: "A.8.8", title: "Technical Vulns", spec: "Evaluate and remediate vulnerabilities in a timely manner." },
+            e8: { id: "Patch Apps", title: "Rapid Patching", spec: "Patch critical vulnerabilities within 48 hours for productivity software." },
+            cis: { id: "CIS 07", title: "Vuln Mgmt", spec: "Use automated tools to scan and address vulnerabilities on a schedule." },
+            itil: { id: "Change Mgmt", title: "Change Control", spec: "Assess update risks to ensure service stability." }
         }
     ];
 
+    function init() {
+        const s1 = document.getElementById('f1'), s2 = document.getElementById('f2');
+        frameworks.forEach(f => {
+            const opt1 = new Option(`${f.name} (${f.count} controls)`, f.id);
+            const opt2 = new Option(`${f.name} (${f.count} controls)`, f.id);
+            s1.add(opt1);
+            s2.add(opt2);
+        });
+        s2.selectedIndex = 4; // Default to E8
+        updateUI();
+    }
+
     function updateUI() {
-        const s1 = document.getElementById('f1').value, s2 = document.getElementById('f2').value;
+        const f1_id = document.getElementById('f1').value;
+        const f2_id = document.getElementById('f2').value;
         const query = document.getElementById('keywordSearch').value.toLowerCase();
+        
+        // Calculate Inventory
+        const f1_obj = frameworks.find(f => f.id === f1_id);
+        const f2_obj = frameworks.find(f => f.id === f2_id);
+        const gross = f1_obj.count + f2_obj.count;
+        
+        // Logic for overlap estimation: 
+        // We assume a 40% overlap for high-level vs technical (CIS vs NIST) 
+        // and 70% for policy vs policy (ISO vs NIST).
+        const overlapRate = (f1_id === 'nist800' || f1_id === 'iso') && (f2_id === 'nist800' || f2_id === 'iso') ? 0.7 : 0.45;
+        const overlap = Math.floor(Math.min(f1_obj.count, f2_obj.count) * overlapRate);
+        const net = gross - overlap;
+
+        document.getElementById('total-req').innerText = gross;
+        document.getElementById('total-overlap').innerText = `-${overlap}`;
+        document.getElementById('total-net').innerText = net;
+
         const resDiv = document.getElementById('mappingResult');
         resDiv.innerHTML = "";
-        let fCount = 0, cCount = 0, sCount = 0;
 
         frameworkData.forEach(item => {
-            if (!item[s1] || !item[s2]) return;
-            if (!item.family.toLowerCase().includes(query) && !item[s1].title.toLowerCase().includes(query)) return;
-            fCount++; cCount += 2; sCount += 2;
+            if (!item[f1_id] || !item[f2_id]) return;
+            if (!item.family.toLowerCase().includes(query) && !item[f1_id].id.toLowerCase().includes(query)) return;
+            
             const card = document.createElement('div');
             card.className = "mapping-card";
             card.innerHTML = `<div class="family-box"><div class="family-title">${item.family}</div><div class="family-desc">${item.familyDesc}</div></div>
-                <div class="mapping-content"><div class="side"><div class="code-tag">${item[s1].id}</div><div>${item[s1].title}</div><div class="sub-detail"><strong>Task:</strong> ${item[s1].sub}</div></div>
-                <div style="text-align:center; opacity:0.3; padding-top:20px;">+</div>
-                <div class="side"><div class="code-tag">${item[s2].id}</div><div>${item[s2].title}</div><div class="sub-detail"><strong>Task:</strong> ${item[s2].sub}</div></div></div>`;
+                <div class="mapping-content"><div class="side"><div class="code-tag">${item[f1_id].id}</div><div><strong>${item[f1_id].title}</strong></div><div class="control-spec"><strong>Specification:</strong> ${item[f1_id].spec}</div></div>
+                <div style="text-align:center; opacity:0.3; padding-top:20px; font-weight:bold;">CROSS-WALK</div>
+                <div class="side"><div class="code-tag">${item[f2_id].id}</div><div><strong>${item[f2_id].title}</strong></div><div class="control-spec"><strong>Specification:</strong> ${item[f2_id].spec}</div></div></div>`;
             resDiv.appendChild(card);
         });
-        document.getElementById('stat-fam').innerText = fCount;
-        document.getElementById('stat-ctrl').innerText = cCount;
-        document.getElementById('stat-sub').innerText = sCount;
     }
-    updateUI();
+
+    function downloadChecklist() {
+        const s1 = document.getElementById('f1').selectedOptions[0].text;
+        const s2 = document.getElementById('f2').selectedOptions[0].text;
+        const f1v = document.getElementById('f1').value;
+        const f2v = document.getElementById('f2').value;
+        
+        let content = `SECURITY ARCHITECT IMPLEMENTATION CHECKLIST\nGenerated: ${new Date().toLocaleDateString()}\n\n`;
+        content += `EDUCATIONAL USE DISCLAIMER: This document is for educational purposes only. It is not an official compliance audit.\n\n`;
+        content += `IMPLEMENTATION SUMMARY:\n`;
+        content += `- Gross Requirements: ${document.getElementById('total-req').innerText}\n`;
+        content += `- Harmonized Overlaps: ${document.getElementById('total-overlap').innerText}\n`;
+        content += `- Net Control Implementation Target: ${document.getElementById('total-net').innerText}\n\n`;
+        content += `--------------------------------------------------\n\n`;
+
+        frameworkData.forEach(item => {
+            if (!item[f1v] || !item[f2v]) return;
+            content += `DOMAIN: ${item.family}\n`;
+            content += `[ ] ${s1} (${item[f1v].id}): ${item[f1v].spec}\n`;
+            content += `[ ] ${s2} (${item[f2v].id}): ${item[f2v].spec}\n`;
+            content += `--------------------------------------------------\n\n`;
+        });
+
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'Net_Implementation_Workload.txt'; a.click();
+    }
+
+    init();
 </script>
 </body>
 </html>
