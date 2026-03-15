@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Navigator | Resource Estimator v12.0</title>
+    <title>Cyber Navigator | Gap Analysis & CSV</title>
     <style>
         :root {
             --primary: #007AFF;
@@ -12,208 +12,171 @@
             --border: rgba(255, 255, 255, 0.1);
             --text: #f8fafc;
             --accent: #38bdf8;
-            --warning: #f59e0b;
+            --match: #10b981;
+            --partial: #f59e0b;
+            --gap: #ef4444;
         }
 
-        body { background-color: var(--dark); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; padding: 20px; line-height: 1.6; }
-        .container { max-width: 1200px; margin: 0 auto; }
+        body { background-color: var(--dark); color: var(--text); font-family: 'Inter', sans-serif; padding: 20px; }
+        .container { max-width: 1300px; margin: 0 auto; }
         
         .disclaimer { 
-            background: rgba(245, 158, 11, 0.1); border: 1px solid var(--warning); 
-            padding: 15px; border-radius: 10px; margin-bottom: 25px; font-size: 0.85rem; color: #fbbf24;
+            background: rgba(245, 158, 11, 0.05); border: 1px solid var(--partial); 
+            padding: 15px; border-radius: 10px; margin-bottom: 25px; font-size: 0.85rem;
         }
 
-        /* Inventory Counter Styling */
         .inventory-hero {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border: 1px solid var(--primary);
-            padding: 30px;
-            border-radius: 20px;
-            margin-bottom: 30px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px;
         }
-        .inv-box { text-align: center; border-right: 1px solid var(--border); }
-        .inv-box:last-child { border-right: none; }
-        .inv-val { font-size: 2.5rem; font-weight: 900; color: var(--accent); display: block; }
-        .inv-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; }
-        .overlap-bonus { color: #10b981; font-weight: bold; font-size: 0.9rem; }
+        .inv-box { background: #1e293b; padding: 20px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
+        .inv-val { font-size: 2rem; font-weight: 800; display: block; }
 
-        .search-area { background: var(--glass); border: 1px solid var(--border); padding: 25px; border-radius: 20px; margin-bottom: 30px; }
+        .selector-bar { display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px; margin-bottom: 20px; }
         
         .mapping-card { background: var(--glass); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 25px; overflow: hidden; }
-        .family-box { background: rgba(56, 189, 248, 0.1); padding: 15px 25px; border-bottom: 1px solid var(--border); }
-        .family-title { font-weight: 800; color: var(--accent); text-transform: uppercase; font-size: 0.85rem; }
+        .family-header { background: rgba(15, 23, 42, 0.8); padding: 15px 25px; border-bottom: 1px solid var(--border); }
+        .official-desc { font-size: 0.85rem; color: #94a3b8; font-style: italic; margin-top: 5px; }
+
+        .comparison-grid { display: grid; grid-template-columns: 1fr 150px 1fr; padding: 25px; gap: 30px; }
+        .control-panel { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; border: 1px solid var(--border); }
         
-        .mapping-content { display: grid; grid-template-columns: 1fr 60px 1fr; padding: 25px; gap: 25px; }
-        .side { display: flex; flex-direction: column; gap: 12px; }
-        .code-tag { display: inline-block; background: var(--primary); color: white; padding: 3px 10px; border-radius: 5px; font-weight: 800; font-size: 0.9rem; width: fit-content; }
-        .control-spec { font-size: 0.8rem; color: #94a3b8; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; border-left: 3px solid var(--primary); }
-
-        .btn-download {
-            background: var(--primary); color: white; border: none; padding: 12px 24px; 
-            border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%;
+        .status-badge { 
+            display: block; padding: 5px; border-radius: 5px; font-size: 0.7rem; font-weight: 900; 
+            text-transform: uppercase; text-align: center; margin-top: 10px;
         }
+        .bg-match { background: var(--match); color: white; }
+        .bg-partial { background: var(--partial); color: white; }
+        .bg-gap { background: var(--gap); color: white; }
 
-        select, input { background: #1e293b; color: white; padding: 12px; border-radius: 8px; border: 1px solid var(--border); width: 100%; font-size: 1rem; margin-bottom: 10px; }
+        select, input { background: #1e293b; color: white; padding: 12px; border-radius: 8px; border: 1px solid var(--border); width: 100%; }
+        .btn-csv { background: #10b981; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="disclaimer">
-        <strong>⚠️ EDUCATIONAL USE ONLY:</strong> Total counts are estimates based on standard framework mappings (NIST Rev 5, ISO 2022, ISM 2026). Overlap calculations assume a "Master Control" approach where one implementation satisfies multiple compliance goals.
+        <strong>⚠️ EDUCATIONAL PURPOSE ONLY:</strong> This mapping logic analyzes functional overlap. 
+        <strong>Match:</strong> High functional parity. 
+        <strong>Partial:</strong> Overlapping intent but different rigor/scope. 
+        <strong>Gap:</strong> No equivalent control found in the target framework.
     </div>
 
     <div class="inventory-hero">
-        <div class="inv-box">
-            <span class="inv-val" id="total-req">0</span>
-            <span class="inv-label">Gross Req. Controls</span>
-        </div>
-        <div class="inv-box">
-            <span class="inv-val" id="total-overlap" style="color:#10b981;">0</span>
-            <span class="inv-label">Harmonized Overlaps</span>
-        </div>
-        <div class="inv-box">
-            <span class="inv-val" id="total-net" style="color:#f59e0b;">0</span>
-            <span class="inv-label">Net Net Implementation</span>
-        </div>
+        <div class="inv-box"><span class="inv-val" id="cnt-match" style="color:var(--match)">0</span><span class="inv-label">Total Matches</span></div>
+        <div class="inv-box"><span class="inv-val" id="cnt-partial" style="color:var(--partial)">0</span><span class="inv-label">Partial Overlaps</span></div>
+        <div class="inv-box"><span class="inv-val" id="cnt-gap" style="color:var(--gap)">0</span><span class="inv-label">Identified Gaps</span></div>
     </div>
 
-    <div class="search-area">
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px;">
-            <div>
-                <label class="inv-label">Primary Compliance Framework</label>
-                <select id="f1" onchange="updateUI()"></select>
-            </div>
-            <div>
-                <label class="inv-label">Secondary Hardening Framework</label>
-                <select id="f2" onchange="updateUI()"></select>
-            </div>
-        </div>
-        <input type="text" id="keywordSearch" placeholder="Filter by domain or Control ID..." onkeyup="updateUI()">
-        <button class="btn-download" onclick="downloadChecklist()">Download Implementation Checklist (.txt)</button>
+    <div class="selector-bar">
+        <select id="f1" onchange="updateUI()"></select>
+        <select id="f2" onchange="updateUI()"></select>
+        <button class="btn-csv" onclick="exportCSV()">Export to CSV</button>
     </div>
+    <input type="text" id="search" placeholder="Search domains or Control IDs..." onkeyup="updateUI()" style="margin-bottom:20px;">
 
-    <div id="mappingResult"></div>
+    <div id="results"></div>
 </div>
 
 <script>
     const frameworks = [
-        { id: "nist800", name: "NIST 800-53 Rev. 5", count: 1007 },
-        { id: "ism", name: "ASD ISM (Australia)", count: 800 },
-        { id: "nistcsf", name: "NIST CSF 2.0", count: 106 },
-        { id: "iso", name: "ISO 27001:2022", count: 93 },
-        { id: "e8", name: "Essential 8 (AU)", count: 8 },
-        { id: "cis", name: "CIS Controls v8", count: 153 },
-        { id: "itil", name: "ITIL 4 Practices", count: 34 }
+        { id: "ism", name: "ASD ISM (Australia)" },
+        { id: "cobit", name: "COBIT 2019" },
+        { id: "nist800", name: "NIST 800-53 Rev. 5" },
+        { id: "iso", name: "ISO 27001:2022" },
+        { id: "e8", name: "Essential 8" }
     ];
 
-    const frameworkData = [
+    const database = [
         {
             family: "Identity & Access Control",
-            familyDesc: "Managing identity lifecycle and authentication to prevent unauthorized access.",
-            nist800: { id: "AC-2", title: "Account Management", spec: "Manage accounts including creation, modification, and removal based on least privilege." },
-            ism: { id: "ISM-1504", title: "MFA for Services", spec: "Multi-factor authentication is used for all online services communicating sensitive data." },
-            nistcsf: { id: "PR.AA-01", title: "Identity Mgmt", spec: "Access is limited to authorized users, processes, and devices." },
-            iso: { id: "A.5.15", title: "Access Rights", spec: "Provision and review access rights based on business requirements." },
-            e8: { id: "MFA", title: "MFA Enforcement", spec: "MFA for remote, administrative, and third-party access." },
-            cis: { id: "CIS 06", title: "Access Mgmt", spec: "Centralize access control; enforce MFA for all administrative credentials." },
-            itil: { id: "Identity", title: "Identity Practice", spec: "Manage identity lifecycle to maintain service security." }
+            desc: "Official: System and services to ensure access is limited to authorized users/processes.",
+            mappings: [
+                {
+                    ism: { id: "ISM-1504", spec: "MFA for online services." },
+                    cobit: { id: "DSS05.04", spec: "Manage user identities and access rights." },
+                    nist800: { id: "AC-2", spec: "Account lifecycle management." },
+                    iso: { id: "A.5.15", spec: "Review of access rights." },
+                    e8: { id: "MFA", spec: "MFA for all remote/admin access." },
+                    type: "Partial" // Relationship between ISM technical vs COBIT process
+                }
+            ]
         },
         {
-            family: "Vulnerability & Patching",
-            familyDesc: "Mitigating technical weaknesses via software updates.",
-            nist800: { id: "RA-5", title: "Vuln Monitoring", spec: "Scan for and remediate vulnerabilities based on risk assessments." },
-            ism: { id: "ISM-1698", title: "Vuln Scanning", spec: "Use a scanner daily to identify missing patches for online services." },
-            nistcsf: { id: "PR.PS-02", title: "Patching", spec: "Software is managed and patched to reduce the attack surface." },
-            iso: { id: "A.8.8", title: "Technical Vulns", spec: "Evaluate and remediate vulnerabilities in a timely manner." },
-            e8: { id: "Patch Apps", title: "Rapid Patching", spec: "Patch critical vulnerabilities within 48 hours for productivity software." },
-            cis: { id: "CIS 07", title: "Vuln Mgmt", spec: "Use automated tools to scan and address vulnerabilities on a schedule." },
-            itil: { id: "Change Mgmt", title: "Change Control", spec: "Assess update risks to ensure service stability." }
+            family: "Cyber Security Program Management",
+            desc: "Official: Framework for the planning, implementation, and oversight of security operations.",
+            mappings: [
+                {
+                    ism: { id: "ISM-0033", spec: "Implement a cyber security program." },
+                    cobit: { id: "APO13.01", spec: "Establish an ISMS." },
+                    nist800: { id: "PM-1", spec: "Information security program plan." },
+                    iso: { id: "A.5.1", spec: "Policies for information security." },
+                    e8: { id: "None", spec: "Essential 8 is purely mitigation, not governance." },
+                    type: "Gap" // Showing E8 has no governance equivalent
+                }
+            ]
         }
     ];
 
     function init() {
         const s1 = document.getElementById('f1'), s2 = document.getElementById('f2');
         frameworks.forEach(f => {
-            const opt1 = new Option(`${f.name} (${f.count} controls)`, f.id);
-            const opt2 = new Option(`${f.name} (${f.count} controls)`, f.id);
-            s1.add(opt1);
-            s2.add(opt2);
+            s1.add(new Option(f.name, f.id));
+            s2.add(new Option(f.name, f.id));
         });
-        s2.selectedIndex = 4; // Default to E8
+        s2.selectedIndex = 1;
         updateUI();
     }
 
     function updateUI() {
-        const f1_id = document.getElementById('f1').value;
-        const f2_id = document.getElementById('f2').value;
-        const query = document.getElementById('keywordSearch').value.toLowerCase();
-        
-        // Calculate Inventory
-        const f1_obj = frameworks.find(f => f.id === f1_id);
-        const f2_obj = frameworks.find(f => f.id === f2_id);
-        const gross = f1_obj.count + f2_obj.count;
-        
-        // Logic for overlap estimation: 
-        // We assume a 40% overlap for high-level vs technical (CIS vs NIST) 
-        // and 70% for policy vs policy (ISO vs NIST).
-        const overlapRate = (f1_id === 'nist800' || f1_id === 'iso') && (f2_id === 'nist800' || f2_id === 'iso') ? 0.7 : 0.45;
-        const overlap = Math.floor(Math.min(f1_obj.count, f2_obj.count) * overlapRate);
-        const net = gross - overlap;
-
-        document.getElementById('total-req').innerText = gross;
-        document.getElementById('total-overlap').innerText = `-${overlap}`;
-        document.getElementById('total-net').innerText = net;
-
-        const resDiv = document.getElementById('mappingResult');
+        const f1 = document.getElementById('f1').value, f2 = document.getElementById('f2').value;
+        const q = document.getElementById('search').value.toLowerCase();
+        const resDiv = document.getElementById('results');
         resDiv.innerHTML = "";
+        
+        let m=0, p=0, g=0;
 
-        frameworkData.forEach(item => {
-            if (!item[f1_id] || !item[f2_id]) return;
-            if (!item.family.toLowerCase().includes(query) && !item[f1_id].id.toLowerCase().includes(query)) return;
-            
+        database.forEach(cat => {
+            const filtered = cat.mappings.filter(map => (cat.family + map[f1].id).toLowerCase().includes(q));
+            if(filtered.length === 0) return;
+
             const card = document.createElement('div');
             card.className = "mapping-card";
-            card.innerHTML = `<div class="family-box"><div class="family-title">${item.family}</div><div class="family-desc">${item.familyDesc}</div></div>
-                <div class="mapping-content"><div class="side"><div class="code-tag">${item[f1_id].id}</div><div><strong>${item[f1_id].title}</strong></div><div class="control-spec"><strong>Specification:</strong> ${item[f1_id].spec}</div></div>
-                <div style="text-align:center; opacity:0.3; padding-top:20px; font-weight:bold;">CROSS-WALK</div>
-                <div class="side"><div class="code-tag">${item[f2_id].id}</div><div><strong>${item[f2_id].title}</strong></div><div class="control-spec"><strong>Specification:</strong> ${item[f2_id].spec}</div></div></div>`;
+            card.innerHTML = `<div class="family-header"><strong>${cat.family}</strong><div class="official-desc">${cat.desc}</div></div>`;
+            
+            filtered.forEach(map => {
+                let status = "Match";
+                if (map[f1].id === "None" || map[f2].id === "None") { status = "Gap"; g++; }
+                else if (map.type === "Partial") { status = "Partial"; p++; }
+                else { m++; }
+
+                card.innerHTML += `<div class="comparison-grid">
+                    <div class="control-panel"><strong>${map[f1].id}</strong><p>${map[f1].spec}</p></div>
+                    <div style="text-align:center"><span class="status-badge bg-${status.toLowerCase()}">${status}</span></div>
+                    <div class="control-panel"><strong>${map[f2].id}</strong><p>${map[f2].spec}</p></div>
+                </div>`;
+            });
             resDiv.appendChild(card);
         });
+        document.getElementById('cnt-match').innerText = m;
+        document.getElementById('cnt-partial').innerText = p;
+        document.getElementById('cnt-gap').innerText = g;
     }
 
-    function downloadChecklist() {
-        const s1 = document.getElementById('f1').selectedOptions[0].text;
-        const s2 = document.getElementById('f2').selectedOptions[0].text;
-        const f1v = document.getElementById('f1').value;
-        const f2v = document.getElementById('f2').value;
-        
-        let content = `SECURITY ARCHITECT IMPLEMENTATION CHECKLIST\nGenerated: ${new Date().toLocaleDateString()}\n\n`;
-        content += `EDUCATIONAL USE DISCLAIMER: This document is for educational purposes only. It is not an official compliance audit.\n\n`;
-        content += `IMPLEMENTATION SUMMARY:\n`;
-        content += `- Gross Requirements: ${document.getElementById('total-req').innerText}\n`;
-        content += `- Harmonized Overlaps: ${document.getElementById('total-overlap').innerText}\n`;
-        content += `- Net Control Implementation Target: ${document.getElementById('total-net').innerText}\n\n`;
-        content += `--------------------------------------------------\n\n`;
-
-        frameworkData.forEach(item => {
-            if (!item[f1v] || !item[f2v]) return;
-            content += `DOMAIN: ${item.family}\n`;
-            content += `[ ] ${s1} (${item[f1v].id}): ${item[f1v].spec}\n`;
-            content += `[ ] ${s2} (${item[f2v].id}): ${item[f2v].spec}\n`;
-            content += `--------------------------------------------------\n\n`;
+    function exportCSV() {
+        const f1 = document.getElementById('f1').value, f2 = document.getElementById('f2').value;
+        let csv = "Family,Framework A ID,Framework A Spec,Alignment,Framework B ID,Framework B Spec\n";
+        database.forEach(cat => {
+            cat.mappings.forEach(map => {
+                let status = (map[f1].id === "None" || map[f2].id === "None") ? "Gap" : (map.type === "Partial" ? "Partial" : "Match");
+                csv += `"${cat.family}","${map[f1].id}","${map[f1].spec}","${status}","${map[f2].id}","${map[f2].spec}"\n`;
+            });
         });
-
-        const blob = new Blob([content], { type: 'text/plain' });
+        const blob = new Blob([csv], { type: 'text/csv' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = url; a.download = 'Net_Implementation_Workload.txt'; a.click();
+        a.href = url; a.download = 'Cyber_Framework_Alignment.csv'; a.click();
     }
-
     init();
 </script>
 </body>
