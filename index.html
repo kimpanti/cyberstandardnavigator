@@ -26,21 +26,20 @@
         
         select, input { background: #1e293b; color: white; padding: 12px; border-radius: 8px; border: 1px solid var(--border); width: 100%; margin-bottom: 15px; }
         .btn-csv { background: #10b981; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s; }
-        .btn-csv:hover { opacity: 0.8; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div style="background: rgba(56, 189, 248, 0.05); border: 1px solid var(--accent); padding: 20px; border-radius: 12px; margin-bottom: 25px; font-size: 0.9rem;">
-        <strong>Comprehensive Alignment Engine:</strong> This tool maps the full lifecycle of cyber security controls across Governance, Protection, Detection, Response, and Recovery. 
-        All descriptions use <strong>Australian English</strong> and reference 2026 official technical catalogues.
+        <strong>Comprehensive Mapping:</strong> This matrix covers all core control families. 
+        <strong>Match:</strong> Functional equivalence. <strong>Partial:</strong> Overlapping intent with different rigor. <strong>Gap:</strong> Missing requirement.
     </div>
 
     <div class="stats-bar">
-        <div class="stat-box"><span id="stat-total" style="font-size: 1.5rem; font-weight: 800; color: var(--accent);">0</span><br><small>TOTAL MAPPED</small></div>
-        <div class="stat-box"><span id="stat-match" style="font-size: 1.5rem; font-weight: 800; color: var(--match);">0</span><br><small>FULL MATCH</small></div>
-        <div class="stat-box"><span id="stat-partial" style="font-size: 1.5rem; font-weight: 800; color: var(--partial);">0</span><br><small>PARTIAL</small></div>
+        <div class="stat-box"><span id="stat-total" style="font-size: 1.5rem; font-weight: 800; color: var(--accent);">0</span><br><small>TOTAL CONTROLS</small></div>
+        <div class="stat-box"><span id="stat-match" style="font-size: 1.5rem; font-weight: 800; color: var(--match);">0</span><br><small>FULL MATCHES</small></div>
+        <div class="stat-box"><span id="stat-partial" style="font-size: 1.5rem; font-weight: 800; color: var(--partial);">0</span><br><small>PARTIALS</small></div>
         <div class="stat-box"><span id="stat-gap" style="font-size: 1.5rem; font-weight: 800; color: var(--gap);">0</span><br><small>GAPS</small></div>
     </div>
 
@@ -49,8 +48,8 @@
         <select id="f2" onchange="render()"></select>
     </div>
     
-    <input type="text" id="search" placeholder="Filter by Domain, ID, or Keyword (e.g. 'Authorised', 'Logging', 'SC-28')..." onkeyup="render()">
-    <button class="btn-csv" onclick="exportCSV()">Export Comprehensive AU Alignment Matrix (CSV)</button>
+    <input type="text" id="search" placeholder="Search by ID or Keyword (e.g. 'Logging', 'MFA', 'Authorised')..." onkeyup="render()">
+    <button class="btn-csv" onclick="exportCSV()">Export Comprehensive Matrix (CSV)</button>
 
     <div id="display"></div>
 </div>
@@ -71,28 +70,13 @@
             desc: "Official: Controls for identifying, authenticating, and authorising entities to access system resources.",
             mappings: [
                 {
-                    ism: { id: "ISM-1504", spec: "Multi-factor authentication (MFA) is used for all online services.", src: frameworks.ism.url },
-                    nistcsf: { id: "PR.AA-01", spec: "Identities for authorised users are managed and centralised.", src: frameworks.nistcsf.url },
-                    cobit: { id: "DSS05.04", spec: "Manage user identities and access rights based on business need.", src: frameworks.cobit.url },
-                    nist800: { id: "AC-2", spec: "Account management lifecycle including automated tracking.", src: frameworks.nist800.url },
-                    iso: { id: "A.5.15", spec: "Provisioning and review of user access rights.", src: frameworks.iso.url },
-                    e8: { id: "MFA", spec: "Enforce MFA for all remote, administrative, and third-party access.", src: frameworks.e8.url },
+                    ism: { id: "ISM-1504", spec: "MFA is used for all online services.", src: frameworks.ism.url },
+                    nistcsf: { id: "PR.AA-01", spec: "Identities for authorised users are managed.", src: frameworks.nistcsf.url },
+                    cobit: { id: "DSS05.04", spec: "Manage user identities and access rights.", src: frameworks.cobit.url },
+                    nist800: { id: "AC-2", spec: "Account management lifecycle.", src: frameworks.nist800.url },
+                    iso: { id: "A.5.15", spec: "Review of user access rights.", src: frameworks.iso.url },
+                    e8: { id: "MFA", spec: "Enforce MFA for remote/admin access.", src: frameworks.e8.url },
                     type: "Match"
-                }
-            ]
-        },
-        {
-            family: "Asset & Inventory Management",
-            desc: "Official: Procedures for identifying and categorising physical and virtual assets.",
-            mappings: [
-                {
-                    ism: { id: "ISM-0335", spec: "A register of all system hardware and software is maintained.", src: frameworks.ism.url },
-                    nistcsf: { id: "ID.AM-01", spec: "Inventory of physical devices and systems within the organisation.", src: frameworks.nistcsf.url },
-                    cobit: { id: "BAI09.01", spec: "Identify and record assets to ensure effective lifecycle management.", src: frameworks.cobit.url },
-                    nist800: { id: "IA-3", spec: "Device identification and authentication.", src: frameworks.nist800.url },
-                    iso: { id: "A.5.9", spec: "Inventory of information and other associated assets.", src: frameworks.iso.url },
-                    e8: { id: "None", spec: "Gap: E8 focuses on technical mitigation, not inventory governance.", src: "N/A" },
-                    type: "Partial"
                 }
             ]
         },
@@ -101,13 +85,43 @@
             desc: "Official: Mechanisms for capturing and reviewing security events to detect unauthorised activity.",
             mappings: [
                 {
-                    ism: { id: "ISM-0580", spec: "Event logs are captured for all security-relevant events.", src: frameworks.ism.url },
-                    nistcsf: { id: "DE.AE-03", spec: "Event data is aggregated and correlated from multiple sources.", src: frameworks.nistcsf.url },
-                    cobit: { id: "DSS05.07", spec: "Monitor the infrastructure for security-related events.", src: frameworks.cobit.url },
-                    nist800: { id: "AU-2", spec: "Event logging and review across all system components.", src: frameworks.nist800.url },
-                    iso: { id: "A.8.15", spec: "Logging and monitoring of system and user activities.", src: frameworks.iso.url },
-                    e8: { id: "None", spec: "Gap: E8 does not explicitly mandate centralised logging.", src: "N/A" },
+                    ism: { id: "ISM-0580", spec: "Event logs are captured for all security events.", src: frameworks.ism.url },
+                    nistcsf: { id: "DE.AE-03", spec: "Event data is aggregated and correlated.", src: frameworks.nistcsf.url },
+                    cobit: { id: "DSS05.07", spec: "Monitor infrastructure for security events.", src: frameworks.cobit.url },
+                    nist800: { id: "AU-2", spec: "Event logging and review capabilities.", src: frameworks.nist800.url },
+                    iso: { id: "A.8.15", spec: "Logging and monitoring of system activities.", src: frameworks.iso.url },
+                    e8: { id: "None", spec: "Gap: E8 does not mandate logging.", src: "N/A" },
                     type: "Partial"
+                }
+            ]
+        },
+        {
+            family: "Data Security",
+            desc: "Official: Protecting the confidentiality and integrity of information at rest and in transit.",
+            mappings: [
+                {
+                    ism: { id: "ISM-1250", spec: "Encryption of data at rest.", src: frameworks.ism.url },
+                    nistcsf: { id: "PR.DS-01", spec: "Data at rest is protected.", src: frameworks.nistcsf.url },
+                    cobit: { id: "DSS05.03", spec: "Manage endpoint security.", src: frameworks.cobit.url },
+                    nist800: { id: "SC-28", spec: "Protection of information at rest.", src: frameworks.nist800.url },
+                    iso: { id: "A.8.24", spec: "Information at rest protection.", src: frameworks.iso.url },
+                    e8: { id: "None", spec: "Gap: E8 focuses on access, not encryption.", src: "N/A" },
+                    type: "Partial"
+                }
+            ]
+        },
+        {
+            family: "Asset Management",
+            desc: "Official: Identifying and categorising virtual and physical assets.",
+            mappings: [
+                {
+                    ism: { id: "ISM-0335", spec: "Register of all hardware/software is maintained.", src: frameworks.ism.url },
+                    nistcsf: { id: "ID.AM-01", spec: "Inventory of physical devices.", src: frameworks.nistcsf.url },
+                    cobit: { id: "BAI09.01", spec: "Identify and record assets.", src: frameworks.cobit.url },
+                    nist800: { id: "IA-3", spec: "Device identification.", src: frameworks.nist800.url },
+                    iso: { id: "A.5.9", spec: "Inventory of information assets.", src: frameworks.iso.url },
+                    e8: { id: "None", spec: "Gap: E8 does not cover inventory governance.", src: "N/A" },
+                    type: "Gap"
                 }
             ]
         }
@@ -119,8 +133,7 @@
             s1.add(new Option(obj.name, id));
             s2.add(new Option(obj.name, id));
         });
-        s1.value = "ism";
-        s2.value = "nistcsf";
+        s1.value = "ism"; s2.value = "nistcsf";
         render();
     }
 
@@ -132,7 +145,7 @@
         let counts = { total: 0, match: 0, partial: 0, gap: 0 };
 
         database.forEach(cat => {
-            const items = cat.mappings.filter(m => (cat.family + m[f1].id + m[f2].id + m[f1].spec).toLowerCase().includes(q));
+            const items = cat.mappings.filter(m => (cat.family + m[f1].id + m[f2].id).toLowerCase().includes(q));
             if (items.length === 0) return;
 
             const card = document.createElement('div');
@@ -150,13 +163,13 @@
                         <div class="pane">
                             <strong style="color:var(--accent)">${d1.id}</strong>
                             <p style="font-size:0.8rem; margin: 8px 0;">${d1.spec}</p>
-                            ${d1.src !== "N/A" ? `<a href="${d1.src}" target="_blank" class="source-link">Official Source ↗</a>` : ''}
+                            ${d1.src !== "N/A" ? `<a href="${d1.src}" target="_blank" class="source-link">Source ↗</a>` : ''}
                         </div>
                         <div style="text-align:center;"><span class="status-pill bg-${status.toLowerCase()}">${status}</span></div>
                         <div class="pane">
                             <strong style="color:var(--accent)">${d2.id}</strong>
                             <p style="font-size:0.8rem; margin: 8px 0;">${d2.spec}</p>
-                            ${d2.src !== "N/A" ? `<a href="${d2.src}" target="_blank" class="source-link">Official Source ↗</a>` : ''}
+                            ${d2.src !== "N/A" ? `<a href="${d2.src}" target="_blank" class="source-link">Source ↗</a>` : ''}
                         </div>
                     </div>`;
             });
@@ -170,7 +183,7 @@
 
     function exportCSV() {
         const f1 = document.getElementById('f1').value, f2 = document.getElementById('f2').value;
-        let csv = "Domain,ID_A,Spec_A,Source_A,Alignment,ID_B,Spec_B,Source_B\n";
+        let csv = "Family,ID_A,Spec_A,Source_A,Alignment,ID_B,Spec_B,Source_B\n";
         database.forEach(cat => {
             cat.mappings.forEach(m => {
                 const d1 = m[f1], d2 = m[f2];
@@ -181,7 +194,7 @@
         const blob = new Blob([csv], { type: 'text/csv' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = `AU_Alignment_Matrix_${f1}_${f2}.csv`;
+        a.download = `Full_Mapping_${f1}_vs_${f2}.csv`;
         a.click();
     }
 
