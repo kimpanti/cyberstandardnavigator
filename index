@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Cyber Standard Navigator | 2026 Framework Crosswalk</title>
+    <style>
+        :root { 
+            --primary: #0366d6; 
+            --bg: #ffffff; 
+            --border: #dfe2e5; 
+            --row-even: #f6f8fa; 
+            --danger: #d73a49; 
+            --accent: #2188ff; 
+            --success: #28a745;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; line-height: 1.6; color: #24292e; max-width: 1200px; margin: 0 auto; padding: 20px; background-color: #fafbfc; }
+        
+        /* Disclaimer Styling */
+        .disclaimer { background-color: #fff5f5; border: 1px solid var(--danger); padding: 15px; border-radius: 6px; color: #b71c1c; margin-bottom: 25px; font-size: 13px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        
+        .header-area { text-align: center; padding: 30px 0; border-bottom: 1px solid var(--border); margin-bottom: 30px; }
+        h1 { margin: 0; color: #1b1f23; font-size: 2.8em; letter-spacing: -0.02em; }
+        .subtitle { color: #586069; font-size: 1.2em; margin-top: 10px; }
+        
+        /* Search Bar Enhancement */
+        #searchWrapper { margin: 20px 0; position: relative; }
+        #frameworkSearch { width: 100%; padding: 18px; border: 2px solid var(--border); border-radius: 12px; font-size: 16px; box-sizing: border-box; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        #frameworkSearch:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 4px rgba(33,136,255,0.15); }
+
+        /* Table Mechanics */
+        .table-container { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 40px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        table { border-collapse: collapse; width: 100%; text-align: left; min-width: 1000px; }
+        th { background-color: var(--row-even); padding: 18px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: #586069; border-bottom: 2px solid var(--border); }
+        td { padding: 18px; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: middle; }
+        tr:hover { background-color: #f1f8ff; transition: background 0.1s; }
+        
+        .badge { display: inline-block; padding: 4px 12px; font-size: 11px; font-weight: 700; border-radius: 20px; background: #e1f5fe; color: #01579b; margin-top: 4px; text-transform: uppercase; }
+        .ext-link { color: var(--primary); text-decoration: none; font-weight: 600; font-size: 13px; border: 1px solid var(--primary); padding: 4px 10px; border-radius: 4px; transition: all 0.2s; }
+        .ext-link:hover { background: var(--primary); color: white; }
+        
+        /* Maturity Model Layout */
+        .maturity-section { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 30px; margin-top: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .maturity-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 25px; }
+        .maturity-card { padding: 25px; border-radius: 8px; background: #ffffff; border: 1px solid #e1e4e8; transition: transform 0.2s; }
+        .maturity-card:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .lvl-1 { border-top: 8px solid #ffd180; }
+        .lvl-2 { border-top: 8px solid #81c784; }
+        .lvl-3 { border-top: 8px solid #4db6ac; }
+        .maturity-card h3 { margin-top: 0; color: #1b1f23; }
+        .maturity-tag { color: var(--success); font-weight: bold; font-size: 0.9em; display: block; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="disclaimer">
+    <strong>⚠️ VERIFICATION REQUIRED:</strong> This tool is a prototype for educational demonstration. Framework mappings are updated periodically by NIST, ISO, and ACSC. Consult official 2026 technical specifications for formal compliance audits.
+</div>
+
+<div class="header-area">
+    <h1>The Cyber Standard Navigator</h1>
+    <p class="subtitle">Interactively mapping the world's leading security frameworks</p>
+</div>
+
+<div id="searchWrapper">
+    <input type="text" id="frameworkSearch" placeholder="Filter by framework (e.g. 'ISO', 'NIST'), category, or link type..." onkeyup="filterTable()">
+</div>
+
+<div class="table-container">
+    <table id="frameworkTable">
+        <thead>
+            <tr>
+                <th>Framework / Standard</th>
+                <th>Control Families</th>
+                <th>Core Controls</th>
+                <th>Sub-Controls / Safeguards</th>
+                <th>Official Mapping Links</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>NIST CSF 2.0</strong><br><span class="badge">Outcome-Based</span></td>
+                <td>6 Functions (Govern+)</td>
+                <td>22 Categories</td>
+                <td>106 Subcategories</td>
+                <td><a class="ext-link" href="https://csrc.nist.gov/Projects/cybersecurity-framework/filters-and-informative-references" target="_blank">View NIST OLIR Hub</a></td>
+            </tr>
+            <tr>
+                <td><strong>NIST 800-53 Rev 5</strong><br><span class="badge">Prescriptive Catalog</span></td>
+                <td>20 Families</td>
+                <td>324 Base Controls</td>
+                <td>1,189+ Enhancements</td>
+                <td><a class="ext-link" href="https://csrc.nist.gov/csrc/media/Publications/sp/800-53/rev-5/final/documents/sp800-53r5-control-catalog.xlsx" target="_blank">Direct .XLSX Catalog</a></td>
+            </tr>
+            <tr>
+                <td><strong>ISO/IEC 27001:2022</strong><br><span class="badge">ISMS Standard</span></td>
+                <td>4 Themes (Annex A)</td>
+                <td>93 Controls</td>
+                <td>ISO 27002 Details</td>
+                <td><a class="ext-link" href="https://www.iso.org/standard/27001" target="_blank">ISO Official Page</a></td>
+            </tr>
+            <tr>
+                <td><strong>CIS Top 18 v8</strong><br><span class="badge">Technical Hygiene</span></td>
+                <td>18 Controls</td>
+                <td>153 Safeguards</td>
+                <td>IG1, IG2, IG3 Groups</td>
+                <td><a class="ext-link" href="https://www.cisecurity.org/controls/v8" target="_blank">CIS Mapping Tool</a></td>
+            </tr>
+            <tr>
+                <td><strong>Essential 8 (ACSC)</strong><br><span class="badge">Threat-Mitigation</span></td>
+                <td>8 Strategies</td>
+                <td>~38 per ML</td>
+                <td>114 total checks</td>
+                <td><a class="ext-link" href="https://www.cyber.gov.au/resources-business-and-government/essential-eight-explanation" target="_blank">ACSC Strategy Hub</a></td>
+            </tr>
+            <tr>
+                <td><strong>COBIT 2019</strong><br><span class="badge">Governance</span></td>
+                <td>5 Domains</td>
+                <td>40 Objectives</td>
+                <td>230 Practices</td>
+                <td><a class="ext-link" href="https://www.isaca.org/resources/cobit" target="_blank">ISACA Resource Center</a></td>
+            </tr>
+            <tr>
+                <td><strong>ITIL 4</strong><br><span class="badge">Service Management</span></td>
+                <td>3 Categories</td>
+                <td>34 Practices</td>
+                <td>Operational Processes</td>
+                <td><a class="ext-link" href="https://www.axelos.com/certifications/itil-service-management" target="_blank">Axelos Reference</a></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+
+<div class="maturity-section">
+    <h2>Maturity Model Explorer (Essential 8)</h2>
+    <p>Modern frameworks prioritize <strong>Maturity Levels (ML)</strong> to allow organizations to scale based on the specific sophistication of the adversaries they face.</p>
+    
+    <div class="maturity-grid">
+        <div class="maturity-card lvl-1">
+            <span class="maturity-tag">ML 1: Basic Hygiene</span>
+            <h3>Opportunistic Threats</h3>
+            <p>Focuses on adversaries using widely available "off-the-shelf" exploits. Requires core technical controls like MFA on all remote access and rapid patching of high-risk vulnerabilities.</p>
+        </div>
+        <div class="maturity-card lvl-2">
+            <span class="maturity-tag">ML 2: Managed</span>
+            <h3>Targeted Threats</h3>
+            <p>Adversaries are willing to invest more time in a specific target. Requires enhanced logging, centralized administrative privilege management, and multi-layered backups.</p>
+        </div>
+        <div class="maturity-card lvl-3">
+            <span class="maturity-tag">ML 3: Strategic</span>
+            <h3>Advanced Threats</h3>
+            <p>Protection against adversaries who employ tailored exploits and sophisticated social engineering. Requires behavioral monitoring and automated application control.</p>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+function filterTable() {
+    const input = document.getElementById("frameworkSearch");
+    const filter = input.value.toUpperCase();
+    const table = document.getElementById("frameworkTable");
+    const tr = table.getElementsByTagName("tr");
+
+    for (let i = 1; i < tr.length; i++) {
+        let visible = false;
+        const td = tr[i].getElementsByTagName("td");
+        for (let j = 0; j < td.length; j++) {
+            if (td[j] && td[j].innerText.toUpperCase().indexOf(filter) > -1) {
+                visible = true;
+                break;
+            }
+        }
+        tr[i].style.display = visible ? "" : "none";
+    }
+}
+</script>
+
+</body>
+</html>
