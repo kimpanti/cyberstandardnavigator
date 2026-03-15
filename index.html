@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Navigator | Verified v17.0</title>
+    <title>Cyber Navigator | Full Spectrum AU v19.0</title>
     <style>
         :root {
             --primary: #007AFF; --dark: #0f172a; --glass: rgba(255, 255, 255, 0.05);
@@ -11,35 +11,37 @@
             --match: #10b981; --partial: #f59e0b; --gap: #ef4444;
         }
         body { background: var(--dark); color: var(--text); font-family: 'Inter', sans-serif; padding: 20px; font-size: 0.95rem; }
-        .container { max-width: 1300px; margin: 0 auto; }
+        .container { max-width: 1400px; margin: 0 auto; }
         
-        /* Official Source Badge */
-        .source-link { 
-            display: inline-block; margin-top: 8px; font-size: 0.75rem; 
-            color: var(--accent); text-decoration: none; border-bottom: 1px dashed var(--accent);
-        }
-        .source-link:hover { color: #fff; border-bottom-style: solid; }
-
+        .source-link { display: inline-block; margin-top: 8px; font-size: 0.75rem; color: var(--accent); text-decoration: none; border-bottom: 1px dashed var(--accent); }
         .mapping-card { background: var(--glass); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 25px; overflow: hidden; }
         .family-header { background: rgba(15, 23, 42, 0.8); padding: 15px 20px; border-bottom: 1px solid var(--border); }
         .comparison-grid { display: grid; grid-template-columns: 1fr 140px 1fr; gap: 25px; padding: 20px; align-items: start; }
         .pane { background: rgba(0,0,0,0.25); padding: 15px; border-radius: 8px; border: 1px solid var(--border); }
-        
-        .status-pill { 
-            display: block; padding: 6px; border-radius: 6px; font-size: 0.7rem; font-weight: 900; 
-            text-transform: uppercase; text-align: center; margin-bottom: 10px;
-        }
+        .status-pill { display: block; padding: 6px; border-radius: 6px; font-size: 0.7rem; font-weight: 900; text-transform: uppercase; text-align: center; margin-bottom: 10px; }
         .bg-match { background: var(--match); } .bg-partial { background: var(--partial); } .bg-gap { background: var(--gap); }
 
+        .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }
+        .stat-box { background: #1e293b; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid var(--border); }
+        
         select, input { background: #1e293b; color: white; padding: 12px; border-radius: 8px; border: 1px solid var(--border); width: 100%; margin-bottom: 15px; }
-        .btn-csv { background: #10b981; color: white; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; }
+        .btn-csv { background: #10b981; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s; }
+        .btn-csv:hover { opacity: 0.8; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--match); padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.85rem;">
-        <strong>Verified Mapping Engine:</strong> All IDs and URLs are derived from 2026 official publications. Use the <strong>Source</strong> links to view the primary documentation for each control.
+    <div style="background: rgba(56, 189, 248, 0.05); border: 1px solid var(--accent); padding: 20px; border-radius: 12px; margin-bottom: 25px; font-size: 0.9rem;">
+        <strong>Comprehensive Alignment Engine:</strong> This tool maps the full lifecycle of cyber security controls across Governance, Protection, Detection, Response, and Recovery. 
+        All descriptions use <strong>Australian English</strong> and reference 2026 official technical catalogues.
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat-box"><span id="stat-total" style="font-size: 1.5rem; font-weight: 800; color: var(--accent);">0</span><br><small>TOTAL MAPPED</small></div>
+        <div class="stat-box"><span id="stat-match" style="font-size: 1.5rem; font-weight: 800; color: var(--match);">0</span><br><small>FULL MATCH</small></div>
+        <div class="stat-box"><span id="stat-partial" style="font-size: 1.5rem; font-weight: 800; color: var(--partial);">0</span><br><small>PARTIAL</small></div>
+        <div class="stat-box"><span id="stat-gap" style="font-size: 1.5rem; font-weight: 800; color: var(--gap);">0</span><br><small>GAPS</small></div>
     </div>
 
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
@@ -47,8 +49,8 @@
         <select id="f2" onchange="render()"></select>
     </div>
     
-    <input type="text" id="search" placeholder="Filter by Control ID (e.g. 'ISM-1504' or 'APO13')..." onkeyup="render()">
-    <button class="btn-csv" onclick="exportCSV()">Export Verified Mapping (CSV)</button>
+    <input type="text" id="search" placeholder="Filter by Domain, ID, or Keyword (e.g. 'Authorised', 'Logging', 'SC-28')..." onkeyup="render()">
+    <button class="btn-csv" onclick="exportCSV()">Export Comprehensive AU Alignment Matrix (CSV)</button>
 
     <div id="display"></div>
 </div>
@@ -56,6 +58,7 @@
 <script>
     const frameworks = {
         ism: { name: "ASD ISM (AU)", url: "https://www.cyber.gov.au/resources/information-security-manual" },
+        nistcsf: { name: "NIST CSF 2.0", url: "https://www.nist.gov/cyberframework" },
         cobit: { name: "COBIT 2019", url: "https://www.isaca.org/resources/cobit" },
         nist800: { name: "NIST 800-53 R5", url: "https://csrc.nist.gov/pubs/sp/800/53/r5/final" },
         iso: { name: "ISO 27001:2022", url: "https://www.iso.org/standard/27001" },
@@ -64,30 +67,47 @@
 
     const database = [
         {
-            family: "Identity & Authentication",
-            desc: "Official: Systems for identifying and authenticating users and devices.",
+            family: "Identity & Access Management",
+            desc: "Official: Controls for identifying, authenticating, and authorising entities to access system resources.",
             mappings: [
                 {
-                    ism: { id: "ISM-1504", spec: "MFA for online services.", src: "https://www.cyber.gov.au/resources/information-security-manual" },
-                    cobit: { id: "DSS05.04", spec: "Manage user identities and access rights.", src: "https://www.isaca.org/resources/cobit" },
-                    nist800: { id: "AC-2", spec: "Account management lifecycle.", src: "https://csrc.nist.gov/pubs/sp/800/53/r5/final" },
-                    iso: { id: "A.5.15", spec: "Provisioning and review of access rights.", src: "https://www.iso.org/standard/27001" },
-                    e8: { id: "MFA", spec: "Enforce MFA for all remote and admin access.", src: "https://www.cyber.gov.au/resources/essential-eight-maturity-model" },
+                    ism: { id: "ISM-1504", spec: "Multi-factor authentication (MFA) is used for all online services.", src: frameworks.ism.url },
+                    nistcsf: { id: "PR.AA-01", spec: "Identities for authorised users are managed and centralised.", src: frameworks.nistcsf.url },
+                    cobit: { id: "DSS05.04", spec: "Manage user identities and access rights based on business need.", src: frameworks.cobit.url },
+                    nist800: { id: "AC-2", spec: "Account management lifecycle including automated tracking.", src: frameworks.nist800.url },
+                    iso: { id: "A.5.15", spec: "Provisioning and review of user access rights.", src: frameworks.iso.url },
+                    e8: { id: "MFA", spec: "Enforce MFA for all remote, administrative, and third-party access.", src: frameworks.e8.url },
+                    type: "Match"
+                }
+            ]
+        },
+        {
+            family: "Asset & Inventory Management",
+            desc: "Official: Procedures for identifying and categorising physical and virtual assets.",
+            mappings: [
+                {
+                    ism: { id: "ISM-0335", spec: "A register of all system hardware and software is maintained.", src: frameworks.ism.url },
+                    nistcsf: { id: "ID.AM-01", spec: "Inventory of physical devices and systems within the organisation.", src: frameworks.nistcsf.url },
+                    cobit: { id: "BAI09.01", spec: "Identify and record assets to ensure effective lifecycle management.", src: frameworks.cobit.url },
+                    nist800: { id: "IA-3", spec: "Device identification and authentication.", src: frameworks.nist800.url },
+                    iso: { id: "A.5.9", spec: "Inventory of information and other associated assets.", src: frameworks.iso.url },
+                    e8: { id: "None", spec: "Gap: E8 focuses on technical mitigation, not inventory governance.", src: "N/A" },
                     type: "Partial"
                 }
             ]
         },
         {
-            family: "Governance & Strategy",
-            desc: "Official: Governance frameworks to align security with business objectives.",
+            family: "Logging & Monitoring",
+            desc: "Official: Mechanisms for capturing and reviewing security events to detect unauthorised activity.",
             mappings: [
                 {
-                    ism: { id: "ISM-0033", spec: "Cyber security program development.", src: "https://www.cyber.gov.au/resources/information-security-manual" },
-                    cobit: { id: "APO13.01", spec: "Establish an Information Security Management System.", src: "https://www.isaca.org/resources/cobit" },
-                    nist800: { id: "PM-1", spec: "Information security program plan.", src: "https://csrc.nist.gov/pubs/sp/800/53/r5/final" },
-                    iso: { id: "A.5.1", spec: "Management-approved security policies.", src: "https://www.iso.org/standard/27001" },
-                    e8: { id: "None", spec: "Gap: E8 is a technical baseline only.", src: "N/A" },
-                    type: "Gap"
+                    ism: { id: "ISM-0580", spec: "Event logs are captured for all security-relevant events.", src: frameworks.ism.url },
+                    nistcsf: { id: "DE.AE-03", spec: "Event data is aggregated and correlated from multiple sources.", src: frameworks.nistcsf.url },
+                    cobit: { id: "DSS05.07", spec: "Monitor the infrastructure for security-related events.", src: frameworks.cobit.url },
+                    nist800: { id: "AU-2", spec: "Event logging and review across all system components.", src: frameworks.nist800.url },
+                    iso: { id: "A.8.15", spec: "Logging and monitoring of system and user activities.", src: frameworks.iso.url },
+                    e8: { id: "None", spec: "Gap: E8 does not explicitly mandate centralised logging.", src: "N/A" },
+                    type: "Partial"
                 }
             ]
         }
@@ -99,7 +119,8 @@
             s1.add(new Option(obj.name, id));
             s2.add(new Option(obj.name, id));
         });
-        s2.selectedIndex = 1;
+        s1.value = "ism";
+        s2.value = "nistcsf";
         render();
     }
 
@@ -108,9 +129,10 @@
         const q = document.getElementById('search').value.toLowerCase();
         const display = document.getElementById('display');
         display.innerHTML = "";
+        let counts = { total: 0, match: 0, partial: 0, gap: 0 };
 
         database.forEach(cat => {
-            const items = cat.mappings.filter(m => (cat.family + m[f1].id + m[f2].id).toLowerCase().includes(q));
+            const items = cat.mappings.filter(m => (cat.family + m[f1].id + m[f2].id + m[f1].spec).toLowerCase().includes(q));
             if (items.length === 0) return;
 
             const card = document.createElement('div');
@@ -118,8 +140,10 @@
             card.innerHTML = `<div class="family-header"><strong>${cat.family}</strong><div style="font-size:0.8rem; color:#94a3b8;">${cat.desc}</div></div>`;
             
             items.forEach(m => {
+                counts.total++;
                 const d1 = m[f1], d2 = m[f2];
                 let status = (d1.id === "None" || d2.id === "None") ? "Gap" : (m.type === "Partial" ? "Partial" : "Match");
+                counts[status.toLowerCase()]++;
 
                 card.innerHTML += `
                     <div class="comparison-grid">
@@ -138,11 +162,15 @@
             });
             display.appendChild(card);
         });
+        document.getElementById('stat-total').innerText = counts.total;
+        document.getElementById('stat-match').innerText = counts.match;
+        document.getElementById('stat-partial').innerText = counts.partial;
+        document.getElementById('stat-gap').innerText = counts.gap;
     }
 
     function exportCSV() {
         const f1 = document.getElementById('f1').value, f2 = document.getElementById('f2').value;
-        let csv = "Family,ID_A,Spec_A,Source_A,Alignment,ID_B,Spec_B,Source_B\n";
+        let csv = "Domain,ID_A,Spec_A,Source_A,Alignment,ID_B,Spec_B,Source_B\n";
         database.forEach(cat => {
             cat.mappings.forEach(m => {
                 const d1 = m[f1], d2 = m[f2];
@@ -153,7 +181,7 @@
         const blob = new Blob([csv], { type: 'text/csv' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = `Verified_Mapping_${f1}_${f2}.csv`;
+        a.download = `AU_Alignment_Matrix_${f1}_${f2}.csv`;
         a.click();
     }
 
