@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Standard Navigator | Authority v7.0</title>
+    <title>Cyber Navigator | Final Authority v8.5</title>
     <style>
         :root {
             --primary: #007AFF;
@@ -11,164 +11,128 @@
             --glass: rgba(255, 255, 255, 0.05);
             --border: rgba(255, 255, 255, 0.1);
             --text: #f8fafc;
-            --nist: #10b981;
-            --itil: #f59e0b;
+            --accent: #38bdf8;
+            --warning: #f59e0b;
         }
 
         body { background-color: var(--dark); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; padding: 20px; line-height: 1.6; }
         .container { max-width: 1200px; margin: 0 auto; }
         
-        /* Analysis Note Section */
-        .logic-note { background: rgba(0, 122, 255, 0.1); border-left: 4px solid var(--primary); padding: 20px; border-radius: 8px; margin-bottom: 30px; font-size: 0.95rem; }
-        
-        .controls-grid { display: grid; grid-template-columns: 1fr 50px 1fr; gap: 20px; margin-bottom: 20px; align-items: center; }
+        .disclaimer { 
+            background: rgba(245, 158, 11, 0.1); border: 1px solid var(--warning); 
+            padding: 15px; border-radius: 10px; margin-bottom: 25px; font-size: 0.85rem; color: #fbbf24;
+        }
+
+        .stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 25px; }
+        .stat-card { background: #1e293b; border: 1px solid var(--border); padding: 15px; border-radius: 12px; text-align: center; }
+        .stat-num { display: block; font-size: 1.8rem; font-weight: 800; color: var(--primary); }
+        .stat-label { font-size: 0.7rem; text-transform: uppercase; color: #94a3b8; }
+
         .search-area { background: var(--glass); border: 1px solid var(--border); padding: 25px; border-radius: 20px; margin-bottom: 30px; }
         
-        input#keywordSearch { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: #1e293b; color: white; font-size: 1rem; }
-
-        .mapping-card { background: var(--glass); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 20px; transition: transform 0.2s; }
-        .mapping-card:hover { transform: translateY(-2px); border-color: var(--primary); }
-        .family-header { background: rgba(255,255,255,0.03); padding: 12px 20px; border-bottom: 1px solid var(--border); font-weight: 800; color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+        .mapping-card { background: var(--glass); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 25px; overflow: hidden; }
+        .family-box { background: rgba(56, 189, 248, 0.1); padding: 15px 25px; border-bottom: 1px solid var(--border); }
+        .family-title { font-weight: 800; color: var(--accent); text-transform: uppercase; font-size: 0.85rem; margin-bottom: 5px; }
+        .family-desc { font-size: 0.9rem; color: #cbd5e1; font-style: italic; opacity: 0.8; }
         
-        .mapping-content { display: grid; grid-template-columns: 1fr 60px 1fr; padding: 25px; gap: 20px; }
-        .side { display: flex; flex-direction: column; gap: 10px; }
-        .code { font-weight: 800; color: var(--primary); font-size: 1.2rem; display: block; }
-        .description { font-size: 0.95rem; color: #cbd5e1; }
-        .sub-controls { font-size: 0.8rem; color: #94a3b8; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border-left: 2px solid var(--primary); }
+        .mapping-content { display: grid; grid-template-columns: 1fr 60px 1fr; padding: 25px; gap: 25px; }
+        .side { display: flex; flex-direction: column; gap: 12px; }
+        .code-tag { display: inline-block; background: var(--primary); color: white; padding: 3px 10px; border-radius: 5px; font-weight: 800; font-size: 0.9rem; width: fit-content; }
+        .sub-detail { font-size: 0.8rem; color: #94a3b8; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; }
 
-        .resource-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 40px; }
-        .res-card { background: #1e293b; padding: 15px; border-radius: 10px; border: 1px solid var(--border); font-size: 0.85rem; }
-        .res-card a { color: var(--primary); text-decoration: none; font-weight: bold; }
-        .res-card a:hover { text-decoration: underline; }
+        .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-top: 30px; }
+        .res-link { background: #1e293b; padding: 15px; border-radius: 10px; border: 1px solid var(--border); font-size: 0.85rem; }
+        .res-link a { color: var(--primary); text-decoration: none; font-weight: bold; }
 
-        select { background: #1e293b; color: white; padding: 15px; border-radius: 12px; border: 1px solid var(--border); width: 100%; cursor: pointer; }
-        .vs-divider { text-align: center; font-weight: 900; opacity: 0.3; }
+        select, input { background: #1e293b; color: white; padding: 12px; border-radius: 8px; border: 1px solid var(--border); width: 100%; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header" style="text-align:center; margin-bottom:40px;">
-        <h1 style="font-size: 2.5rem; margin-bottom:10px;">Cyber Standard Navigator</h1>
-        <div style="display:inline-block; background: var(--primary); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight:bold;">ENTERPRISE EDITION v7.0</div>
+    <div class="disclaimer">
+        <strong>⚠️ EDUCATIONAL USE ONLY:</strong> This tool is a reference guide for mapping intent. Consult with a qualified auditor or legal counsel before finalizing your organization's internal control framework or compliance filings.
     </div>
 
-    <div class="logic-note">
-        <strong>How Mappings Are Derived:</strong> 
-        Mappings in this engine utilize <strong>Ontological Alignment</strong>. Since frameworks like <em>ITIL</em> (Processes) and <em>NIST 800-53</em> (Technical Controls) serve different purposes, we map them based on <strong>Security Intent</strong>. 
-        <ul>
-            <li><strong>Direct Mapping:</strong> High semantic overlap (e.g., NIST AC-2 vs ISO A.5.15).</li>
-            <li><strong>Functional Equivalent:</strong> The process required to satisfy a technical requirement (e.g., ITIL Change Enablement facilitates NIST CM-3).</li>
-        </ul>
+    <div class="stats-bar">
+        <div class="stat-card"><span class="stat-num" id="stat-fam">0</span><span class="stat-label">Families Active</span></div>
+        <div class="stat-card"><span class="stat-num" id="stat-ctrl">0</span><span class="stat-label">Harmonized Controls</span></div>
+        <div class="stat-card"><span class="stat-num" id="stat-sub">0</span><span class="stat-label">Implementation Actions</span></div>
     </div>
 
     <div class="search-area">
-        <div class="controls-grid">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px;">
             <select id="f1" onchange="updateUI()">
                 <option value="nist800">NIST 800-53 Rev. 5</option>
+                <option value="nistcsf">NIST CSF 2.0</option>
                 <option value="itil">ITIL 4 Practices</option>
                 <option value="iso">ISO 27001:2022</option>
-                <option value="cis">CIS Controls v8</option>
-                <option value="e8">Essential 8</option>
             </select>
-            <div class="vs-divider">VS</div>
             <select id="f2" onchange="updateUI()">
-                <option value="itil">ITIL 4 Practices</option>
-                <option value="nist800">NIST 800-53 Rev. 5</option>
-                <option value="iso" selected>ISO 27001:2022</option>
+                <option value="e8">Essential 8 (AU)</option>
                 <option value="cis">CIS Controls v8</option>
-                <option value="e8">Essential 8</option>
+                <option value="nist800">NIST 800-53 Rev. 5</option>
             </select>
         </div>
-        <input type="text" id="keywordSearch" placeholder="Search by domain (e.g., 'Incident', 'Access', 'Inventory')..." onkeyup="updateUI()">
+        <input type="text" id="keywordSearch" placeholder="Search by Mission (e.g., MFA, Recovery, Inventory)..." onkeyup="updateUI()">
     </div>
 
     <div id="mappingResult"></div>
 
-    <h3 style="margin-top:60px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">Official Authority Resources</h3>
-    <div class="resource-links">
-        <div class="res-card">
-            <strong>NIST 800-53 Rev. 5</strong><br>
-            <a href="https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final" target="_blank">Access NIST Control Catalog →</a>
-        </div>
-        <div class="res-card">
-            <strong>ITIL 4 (Axelos)</strong><br>
-            <a href="https://www.axelos.com/certifications/itil-service-management" target="_blank">ITIL 4 Practice Guidance →</a>
-        </div>
-        <div class="res-card">
-            <strong>ISO/IEC 27001:2022</strong><br>
-            <a href="https://www.iso.org/standard/27001" target="_blank">ISO Standard Store →</a>
-        </div>
-        <div class="res-card">
-            <strong>CIS Controls v8</strong><br>
-            <a href="https://www.cisecurity.org/controls/v8" target="_blank">CIS Mapping Tool →</a>
-        </div>
+    <h2 style="margin-top:50px;">Official Authority Resources</h2>
+    <div class="resource-grid">
+        <div class="res-link"><strong>NIST CSF 2.0:</strong><br><a href="https://www.nist.gov/cyberframework" target="_blank">Strategy & Tiers →</a></div>
+        <div class="res-link"><strong>NIST 800-53:</strong><br><a href="https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final" target="_blank">Control Catalog →</a></div>
+        <div class="res-link"><strong>Essential 8 (ACSC):</strong><br><a href="https://www.cyber.gov.au/resources-business-and-government/essential-cyber-security/essential-eight" target="_blank">Australian Mitigation Baseline →</a></div>
+        <div class="res-link"><strong>CIS Controls:</strong><br><a href="https://www.cisecurity.org/controls/v8" target="_blank">Technical Hardening →</a></div>
+        <div class="res-link"><strong>ITIL 4:</strong><br><a href="https://www.axelos.com/certifications/itil-service-management" target="_blank">Practice Guidance →</a></div>
     </div>
 </div>
 
 <script>
-    // Data includes logic for NIST, ITIL, ISO, CIS, and E8
-    const masterData = [
+    const frameworkData = [
         {
             family: "Access Control & Identity",
-            nist800: { id: "AC-2", desc: "Account Management.", sub: "Sub: Create, activate, modify, disable, and remove accounts." },
-            itil: { id: "Identity Management", desc: "Ensuring unique identification of persons/systems.", sub: "Sub: Role-based access and lifecycle of credentials." },
-            iso: { id: "A.5.15", desc: "Access Rights.", sub: "Sub: Provisioning, modifying, and revoking access rights." },
-            cis: { id: "CIS 06", desc: "Access Control Management.", sub: "Sub: Centralized access, MFA for remote users." },
-            e8: { id: "Restrict Admin", desc: "Privileged Access Restriction.", sub: "Sub: L3: All administrative tasks done via separate accounts." }
+            familyDesc: "Managing identities and credentials to ensure authorized access to assets.",
+            nist800: { id: "AC-2", title: "Account Management", sub: "Automate account lifecycle management and review user permissions regularly." },
+            nistcsf: { id: "PR.AA", title: "Authentication", sub: "Users and systems are authenticated for access to assets." },
+            itil: { id: "Identity Mgmt", title: "Role-Based Access", sub: "Define service roles and access permissions within the service lifecycle." },
+            e8: { id: "Restrict Admin", title: "Privileged Access", sub: "Limit administrative privileges to only what is required for the role." },
+            cis: { id: "CIS 06", title: "Access Control", sub: "Enforce MFA for all remote and administrative access." }
         },
         {
-            family: "Incident & Operations",
-            nist800: { id: "IR-4", desc: "Incident Handling.", sub: "Sub: Response to security incidents via analysis and containment." },
-            itil: { id: "Incident Management", desc: "Restore service operation quickly with minimal impact.", sub: "Sub: Priority levels, categorization, and escalation." },
-            iso: { id: "A.5.24", desc: "Incident Management Planning.", sub: "Sub: Response procedures, reporting, and assessments." },
-            cis: { id: "CIS 17", desc: "Incident Response.", sub: "Sub: 17.3 Reporting process, 17.5 Post-incident review." },
-            e8: { id: "Logging", desc: "Security Event Logging.", sub: "Sub: L2: Retain logs for at least 3 months for incident forensics." }
-        },
-        {
-            family: "Change & Configuration",
-            nist800: { id: "CM-3", desc: "Configuration Change Control.", sub: "Sub: Authorize, document, and review changes to the system." },
-            itil: { id: "Change Enablement", desc: "Maximizing successful service changes.", sub: "Sub: Change authority, CAB, risk assessment." },
-            iso: { id: "A.8.32", desc: "Change Management.", sub: "Sub: Requirements for information systems and cloud changes." },
-            cis: { id: "CIS 04", desc: "Secure Configuration.", sub: "Sub: 4.1 Secure baselines, 4.4 Managing default accounts." },
-            e8: { id: "Patch Apps", desc: "Application Patching.", sub: "Sub: L3: 48 hours for critical vulnerabilities." }
+            family: "Recovery & Backups",
+            familyDesc: "Ensuring data can be restored and systems recovered following a disruptive event.",
+            nist800: { id: "CP-9", title: "Information System Backup", sub: "Conduct incremental and full backups with offsite storage and testing." },
+            nistcsf: { id: "RC.RP", title: "Recovery Planning", sub: "Recovery processes are executed to ensure timely restoration of systems." },
+            itil: { id: "Service Continuity", title: "Continuity Mgmt", sub: "Maintain service levels during a disaster via proactive risk planning." },
+            e8: { id: "Daily Backups", title: "Data Recovery", sub: "Back up important data daily and store it offline or in an immutable location." },
+            cis: { id: "CIS 11", title: "Data Recovery", sub: "Automate backups and perform restoration tests at least quarterly." }
         }
     ];
 
     function updateUI() {
-        const s1 = document.getElementById('f1').value;
-        const s2 = document.getElementById('f2').value;
+        const s1 = document.getElementById('f1').value, s2 = document.getElementById('f2').value;
         const query = document.getElementById('keywordSearch').value.toLowerCase();
         const resDiv = document.getElementById('mappingResult');
         resDiv.innerHTML = "";
+        let fCount = 0, cCount = 0, sCount = 0;
 
-        const filtered = masterData.filter(item => 
-            item.family.toLowerCase().includes(query) || 
-            (item[s1] && item[s1].desc.toLowerCase().includes(query)) ||
-            (item[s2] && item[s2].desc.toLowerCase().includes(query))
-        );
-
-        filtered.forEach(item => {
+        frameworkData.forEach(item => {
             if (!item[s1] || !item[s2]) return;
+            if (!item.family.toLowerCase().includes(query) && !item[s1].title.toLowerCase().includes(query)) return;
+            fCount++; cCount += 2; sCount += 2;
             const card = document.createElement('div');
             card.className = "mapping-card";
-            card.innerHTML = `
-                <div class="family-header">${item.family}</div>
-                <div class="mapping-content">
-                    <div class="side">
-                        <span class="code">${item[s1].id}</span>
-                        <div class="description">${item[s1].desc}</div>
-                        <div class="sub-controls">${item[s1].sub}</div>
-                    </div>
-                    <div class="vs-divider">➔</div>
-                    <div class="side">
-                        <span class="code">${item[s2].id}</span>
-                        <div class="description">${item[s2].desc}</div>
-                        <div class="sub-controls">${item[s2].sub}</div>
-                    </div>
-                </div>`;
+            card.innerHTML = `<div class="family-box"><div class="family-title">${item.family}</div><div class="family-desc">${item.familyDesc}</div></div>
+                <div class="mapping-content"><div class="side"><div class="code-tag">${item[s1].id}</div><div>${item[s1].title}</div><div class="sub-detail"><strong>Task:</strong> ${item[s1].sub}</div></div>
+                <div style="text-align:center; opacity:0.3; padding-top:20px;">+</div>
+                <div class="side"><div class="code-tag">${item[s2].id}</div><div>${item[s2].title}</div><div class="sub-detail"><strong>Task:</strong> ${item[s2].sub}</div></div></div>`;
             resDiv.appendChild(card);
         });
+        document.getElementById('stat-fam').innerText = fCount;
+        document.getElementById('stat-ctrl').innerText = cCount;
+        document.getElementById('stat-sub').innerText = sCount;
     }
     updateUI();
 </script>
